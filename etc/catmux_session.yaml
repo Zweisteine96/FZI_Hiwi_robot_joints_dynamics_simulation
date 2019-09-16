@@ -1,0 +1,109 @@
+---
+common:
+  # before_commands will be executed in each pane before doing anything else. Use this e.g. for
+  #   - sourcing an environment
+  #   - ssh-ing to another machine
+  before_commands:
+    - fzirob change_environment sim2log
+    #- export ROS_IP=192.168.1.5
+
+  # The default window will be the one displayed when first connecting to the tmux session
+  default_window: README
+parameters:
+  # Parameters specified here can be used below and they can be overwritten at runtime
+  show_layouts: false # This parameter is used together with the if flag below
+  replacement_param: world\! # Parameters can also be used as replacement templates
+
+
+# Everything will be opened in windows. Windows can have multiple splits.
+windows:
+  - name: roscore
+    splits:
+      - commands:
+        - roscore
+    delay: 1
+  - name: description
+    splits:
+      - commands:
+        - roslaunch sim2log_motek description.launch
+    delay: 1
+  - name: robot
+    splits:
+      - commands:
+        - roslaunch sim2log_motek robot.launch sim:=${sim}
+      - commands:
+        - sleep 3
+        - roslaunch sim2log_motek controller_spawner.launch
+    delay: 5
+  - name: rviz
+    splits:
+      - commands:
+          - rviz
+      - commands: 
+          - rqt
+          
+  - name: high_level
+    layout: tiled
+    splits:
+      - commands:
+        - rosrun sim2log_motek parameters_manager_node
+      - commands:
+        - rosrun sim2log_motek part_selection_node
+
+  - name: state_machine
+    layout: tiled
+    splits:
+      - commands:
+        - roslaunch flexbe_onboard behavior_onboard.launch
+      - commands:
+        - sleep 3
+        - rosrun flexbe_widget be_action_server
+      - commands:
+        - sleep 3
+        - roslaunch flexbe_app flexbe_ocs.launch
+
+
+  # Helpful stuff
+  - name: tiled
+    if: show_layouts # this window will only be started when the 'show_layouts' parameter is true
+    layout: tiled # One can use the default layouts specified by tmux
+    splits:
+      - commands:
+        - echo "catmux with multiple commands"
+        - echo "hello ${replacement_param}"
+      - commands:
+        - echo "1"
+      - commands:
+        - echo "2"
+      - commands:
+        - echo "3"
+      - commands:
+        - echo "4"
+  - name: left-right
+    if: show_layouts
+    layout: even-horizontal
+    splits:
+      - commands:
+        - echo "left"
+      - commands:
+        - echo "right"
+  - name: top-bottom
+    if: show_layouts
+    layout: even-vertical
+    splits:
+      - commands:
+        - echo "top"
+      - commands:
+        - echo "bottom"
+  - name: README
+    splits:
+      - commands:
+        # This looks a bit weird, but gives nicer colors
+        - clear && tput bold && tput setaf 6 && roscat catmux readme_tmux.txt
+        - tput sgr0
+  - name: no_split
+    unless: show_layouts # This window will only be displayed if 'show_layouts' is false
+    # If just one split is desired, just skip it and write the commands directly
+    commands:
+      - echo "hello ${replacement_param}"
+

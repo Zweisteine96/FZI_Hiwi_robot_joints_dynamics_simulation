@@ -1,0 +1,13 @@
+# Settings for ros_control control loop
+hardware_control_loop:
+   loop_hz: 125
+
+# Settings for ros_control hardware interface
+hardware_interface:
+   joints:
+     - ur10_shoulder_pan_joint
+     - ur10_shoulder_lift_joint
+     - ur10_elbow_joint
+     - ur10_wrist_1_joint
+     - ur10_wrist_2_joint
+     - ur10_wrist_3_joint

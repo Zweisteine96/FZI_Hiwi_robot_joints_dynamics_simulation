@@ -1,0 +1,9 @@
+<!--
+Minimal configuration for the pathloader.  Declare joints passive, which you
+don't want the pathloader to control.  By default the pathloader will take all
+non-static joints from the robot_description and feel responsible for them.
+-->
+
+<robot name="conveyor_screwer">
+    <passive_joint name="conveyor_belt_to_reference" />
+</robot>

@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<launch>
+        <arg name="controller_namespace" default="/joint_trajectory_controller" />
+        <arg name="controller_topic_name" default="follow_joint_trajectory" />
+        <arg name="trajectory_folder" default="$(find sim2log_launch)/trajectories" />
+        <arg name="trac_ik_chain_start" default="ur10_base_link" />
+        <arg name="trac_ik_chain_end" default="ur10_tool0" />
+        <arg name="debug" default="false" />
+        <arg name="trac_ik_timeout" default="0.005" />
+        <arg name="tf_publishing_frame" default="my_target"/>
+        <arg name="tf_publishing_rate" default="100"/>
+        <arg name="joint_speed_multipliers" default="[1.0, 1.0, 1.0, 1.0, 1.0, 1.0]"/>
+        <arg name="pose_topic_name" default="/robot/target_frame"/>
+        <arg name="pose_publishing_rate" default="100"/>
+        <arg name="robot_control_reference_frame" default="ur10_base_link"/>
+
+        <include file="$(find motion_launch)/launch/trac_ik.launch">
+                <arg name="chain_start" value="$(arg trac_ik_chain_start)" />
+                <arg name="chain_end" value="$(arg trac_ik_chain_end)" />
+                <arg name="trac_ik_timeout" value="$(arg trac_ik_timeout)" />
+        </include>
+
+        <remap from="joint_trajectory_action" to="$(arg controller_namespace)/$(arg controller_topic_name)" />
+        <include file="$(find motion_launch)/launch/motion_interface.launch">
+                <arg name="controller_namespace" value="$(arg controller_namespace)"/>
+                <arg name="controller_topic_name" value="$(arg controller_topic_name)"/>
+                <arg name="tf_publishing_frame" value="$(arg tf_publishing_frame)"/>
+                <arg name="tf_publishing_rate" value="$(arg tf_publishing_rate)"/>
+                <arg name="joint_speed_multipliers" value="$(arg joint_speed_multipliers)"/>
+                <arg name="topic_name" default="$(arg pose_topic_name)"/>
+                <arg name="publishing_rate" default="$(arg pose_publishing_rate)"/>
+                <arg name="robot_control_reference_frame" default="$(arg robot_control_reference_frame)"/>
+                <arg name="twist_correction_gain" value="0.10"/>
+        </include>
+
+        <include file="$(find motion_launch)/launch/pathloader.launch">
+                <arg name="controller_namespace" value="$(arg controller_namespace)/$(arg controller_topic_name)" />
+                <arg name="trajectory_folder" value="$(arg trajectory_folder)" />
+                <arg name="debug" value="$(arg debug)" />
+                <arg name="joint_speed_multipliers" value="$(arg joint_speed_multipliers)"/>
+        </include>
+</launch>

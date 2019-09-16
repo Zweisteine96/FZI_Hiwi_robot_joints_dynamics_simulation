@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<launch>
+
+  <!-- Load robot description from xacro file -->
+  <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find sim2log_description)/urdf/motek_scene.urdf.xacro'" />
+  <param name="robot_description_semantic" textfile="$(find sim2log_description)/srdf/pathloader.srdf"/>
+
+  <!-- Publish joint state as tf transforms -->
+  <!-- node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher">
+  </node -->
+
+</launch>
+

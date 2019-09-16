@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<launch>
+
+    <node name="stop_controller_spawner" pkg="controller_manager" type="spawner" args="--stopped cartesian_motion_controller" output="screen"/>
+
+</launch>
