@@ -1,6 +1,7 @@
---- name: home
+--- name: placing_1
 --- type: joint_based
---- date: 2019-Sep-17 13:17:12.623929
+--- date: 2019-Sep-17 13:17:47.416404
 --- reference_frame: 
  ur10_shoulder_pan_joint ur10_shoulder_lift_joint ur10_elbow_joint ur10_wrist_1_joint ur10_wrist_2_joint ur10_wrist_3_joint
 2.334		-1.557		-2.125		-0.945		1.578		2.316		wp	0
+2.1		-1.557		-2.125		-0.945		1.578		2.316		wp	0
