@@ -4,16 +4,17 @@ common:
   #   - sourcing an environment
   #   - ssh-ing to another machine
   before_commands:
-    - fzirob change_environment sim2log
-    #- export ROS_IP=192.168.1.5
+    - fzirob change_environment motek_sim2log
+    - export ROS_MASTER_URI=http://192.168.1.3:11311
+    - export ROS_IP=192.168.1.3
 
   # The default window will be the one displayed when first connecting to the tmux session
   default_window: README
 parameters:
   # Parameters specified here can be used below and they can be overwritten at runtime
+  sim: false # Whether to start simulation or real hardware
   show_layouts: false # This parameter is used together with the if flag below
   replacement_param: world\! # Parameters can also be used as replacement templates
-
 
 # Everything will be opened in windows. Windows can have multiple splits.
 windows:
@@ -27,15 +28,21 @@ windows:
       - commands:
         - roslaunch sim2log_motek kinematics.launch
     delay: 1
-  - name: robot
+  - name: hardware
     splits:
       - commands:
+        - ssh 192.168.1.10
+        - ce motek_sim2log
+        - export ROS_MASTER_URI=http://192.168.1.3:11311
+        - export ROS_IP=192.168.1.10
         - roslaunch sim2log_motek robot.launch sim:=${sim}
       - commands:
         - roslaunch sim2log_motek gripper.launch sim:=${sim}
       - commands:
         - sleep 3
         - roslaunch sim2log_motek controller_spawner.launch
+      - commands:
+        - roslaunch sim2log_motek conveyor_belt.launch sim:=${sim}
   - name: motion_pipeline
     splits:
      - commands:
