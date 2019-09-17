@@ -2,6 +2,6 @@
 <launch>
   <machine name="ids-shuttle-10"
     address="ids-shuttle-10"
-    env-loader="/home/tamer/robot_folders/checkout/motek_conveyor_screwing/catkin_ws/env_loader.sh"
+    env-loader="/home/tamer/robot_folders/checkout/motek_sim2log/catkin_ws/env_loader.sh"
     user="tamer"/>
 </launch>

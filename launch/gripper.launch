@@ -1,5 +1,8 @@
 <?xml version="1.0"?>
 <launch>
+        <!-- Arguments-->
+        <arg name="sim" default="True"/>
+
         <arg name="gripper_trajectory_controller_name" default="gripper_pos_based_traj_controller" />
 
         <group ns="gripper_control_node">

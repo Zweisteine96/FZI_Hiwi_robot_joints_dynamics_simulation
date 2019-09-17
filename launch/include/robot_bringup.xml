@@ -8,7 +8,7 @@
         <arg unless="$(arg debug)" name="launch_prefix" value="" />
         <arg     if="$(arg debug)" name="launch_prefix" value="gdb --ex run --args" />
 
-        <arg name="robot_ip" default="ids-ur10"/>
+        <arg name="robot_ip" default="192.168.0.102"/>
         <arg name="limited" default="false"/>
         <arg name="min_payload"  default="0.0"/>
         <arg name="max_payload"  default="5.0"/>
@@ -20,15 +20,14 @@
         <arg name="sim" default="False"/>
         <arg name="with_ros_control" default="true" />
 
-        <arg name="use_ur_modern_driver" default="false"/>
+        <arg name="use_ur_modern_driver" default="true"/>
 
-        <include file="$(find conveyor_screwing)/launch/include/machines.xml"/>
 
         <group unless="$(arg sim)" >
           <!-- Load hardware interface -->
 
           <group if="$(arg use_ur_modern_driver)" >
-            <node machine="ids-shuttle-10" name="ur_hardware_interface" pkg="ur_modern_driver" type="ur_driver" output="screen" launch-prefix="$(arg launch_prefix)">
+            <node name="ur_hardware_interface" pkg="ur_modern_driver" type="ur_driver" output="screen" launch-prefix="$(arg launch_prefix)">
                     <param name="robot_ip_address" type="str" value="$(arg robot_ip)"/>
                     <param name="min_payload" type="double" value="$(arg min_payload)"/>
                     <param name="max_payload" type="double" value="$(arg max_payload)"/>
@@ -49,9 +48,10 @@
 
             <!-- TODO:    base_frame and tool_frame parameters?   -->
 
-            <arg name="controller_config_file" default="$(find ur_rtde_driver)/config/ur10_controllers.yaml"/>
+            <!-- arg name="controller_config_file" default="$(find ur_rtde_driver)/config/ur10_controllers.yaml"/ -->
+            <arg name="controller_config_file" default="$(find sim2log_motek)/etc/ur_modern_driver.yaml"/>
             <arg name="kinematics_config" default="$(find ids_ur_launch)/calibrations/ids-ur10-3_calibration.yaml"/>
-            <arg name="controllers" default="joint_trajectory_controller joint_state_controller speed_scaling_state_controller force_torque_sensor_controller"/>
+            <arg name="controllers" default="joint_trajectory_controller joint_state_controller"/>
             <include file="$(find ur_rtde_driver)/launch/ur_control.launch">
               <arg name="debug" value="$(arg debug)"/>
               <arg name="use_tool_communication" value="false"/>
@@ -59,7 +59,8 @@
               <arg name="robot_ip" value="$(arg robot_ip)"/>
               <arg name="kinematics_config" value="$(arg kinematics_config)"/>
               <arg name="tf_prefix" value="$(arg prefix)"/>
-              <arg name="controllers" value="$(arg controllers)"/>
+              <!-- arg name="controllers" value="$(arg controllers)"/ -->
+              <arg name="controllers" value=""/>
             </include>
           </group>
 
