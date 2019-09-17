@@ -1,0 +1,67 @@
+<?xml version="1.0"?>
+<launch>
+        <!-- ================================================================================-->
+        <!-- =              ur_modern_driver specific                                       =-->
+        <!-- ================================================================================-->
+        <!-- GDB functionality -->
+        <arg name="debug" default="false" />
+        <arg unless="$(arg debug)" name="launch_prefix" value="" />
+        <arg     if="$(arg debug)" name="launch_prefix" value="gdb --ex run --args" />
+
+        <arg name="robot_ip" default="ids-ur10"/>
+        <arg name="limited" default="false"/>
+        <arg name="min_payload"  default="0.0"/>
+        <arg name="max_payload"  default="5.0"/>
+        <arg name="prefix" default="" />
+        <arg name="max_velocity" default="10.0"/> <!-- [rad/s] -->
+        <arg name="base_frame" default="$(arg prefix)base" />
+        <arg name="tool_frame" default="$(arg prefix)tool0_controller" />
+
+        <arg name="sim" default="False"/>
+        <arg name="with_ros_control" default="true" />
+
+        <arg name="use_ur_modern_driver" default="false"/>
+
+        <include file="$(find conveyor_screwing)/launch/include/machines.xml"/>
+
+        <group unless="$(arg sim)" >
+          <!-- Load hardware interface -->
+
+          <group if="$(arg use_ur_modern_driver)" >
+            <node machine="ids-shuttle-10" name="ur_hardware_interface" pkg="ur_modern_driver" type="ur_driver" output="screen" launch-prefix="$(arg launch_prefix)">
+                    <param name="robot_ip_address" type="str" value="$(arg robot_ip)"/>
+                    <param name="min_payload" type="double" value="$(arg min_payload)"/>
+                    <param name="max_payload" type="double" value="$(arg max_payload)"/>
+                    <param name="max_velocity" type="double" value="$(arg max_velocity)"/>
+                    <param name="use_ros_control" type="bool" value="$(arg with_ros_control)"/>
+                    <param name="servoj_gain" type="double" value="750" />
+                    <param name="servo_time" type="double" value="0.008" />
+                    <param name="prefix" value="$(arg prefix)" />
+                    <param name="base_frame" type="str" value="$(arg base_frame)"/>
+                    <param name="tool_frame" type="str" value="$(arg tool_frame)"/>
+            </node>
+
+            <!-- Load controller settings for the ur_modern_driver -->
+            <rosparam file="$(find sim2log_motek)/etc/ur_modern_driver.yaml" command="load"></rosparam>
+          </group>
+
+          <group unless="$(arg use_ur_modern_driver)" >
+
+            <!-- TODO:    base_frame and tool_frame parameters?   -->
+
+            <arg name="controller_config_file" default="$(find ur_rtde_driver)/config/ur10_controllers.yaml"/>
+            <arg name="kinematics_config" default="$(find ids_ur_launch)/calibrations/ids-ur10-3_calibration.yaml"/>
+            <arg name="controllers" default="joint_trajectory_controller joint_state_controller speed_scaling_state_controller force_torque_sensor_controller"/>
+            <include file="$(find ur_rtde_driver)/launch/ur_control.launch">
+              <arg name="debug" value="$(arg debug)"/>
+              <arg name="use_tool_communication" value="false"/>
+              <arg name="controller_config_file" value="$(arg controller_config_file)"/>
+              <arg name="robot_ip" value="$(arg robot_ip)"/>
+              <arg name="kinematics_config" value="$(arg kinematics_config)"/>
+              <arg name="tf_prefix" value="$(arg prefix)"/>
+              <arg name="controllers" value="$(arg controllers)"/>
+            </include>
+          </group>
+
+        </group>
+</launch>

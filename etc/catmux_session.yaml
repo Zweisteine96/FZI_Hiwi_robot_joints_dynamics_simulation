@@ -22,18 +22,24 @@ windows:
       - commands:
         - roscore
     delay: 1
-  - name: description
+  - name: kinematics
     splits:
       - commands:
-        - roslaunch sim2log_motek description.launch
+        - roslaunch sim2log_motek kinematics.launch
     delay: 1
   - name: robot
     splits:
       - commands:
         - roslaunch sim2log_motek robot.launch sim:=${sim}
       - commands:
+        - roslaunch sim2log_motek gripper.launch sim:=${sim}
+      - commands:
         - sleep 3
         - roslaunch sim2log_motek controller_spawner.launch
+  - name: motion_pipeline
+    splits:
+     - commands:
+       - roslaunch sim2log_motek motion_pipeline.launch
     delay: 5
   - name: rviz
     splits:

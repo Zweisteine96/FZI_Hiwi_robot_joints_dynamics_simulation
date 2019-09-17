@@ -1,0 +1,12 @@
+<launch>
+  <param name="generic_hw_control_loop/loop_hz" value="100" />
+  <param name="generic_hw_control_loop/cycle_time_error_threshold" value="0.03" />
+
+  <!-- Load hardware interface -->
+  <node name="sim_hardware_interface" pkg="ros_control_boilerplate" type="sim_hw_main"
+        output="screen" />
+  <param name="hardware_interface/sim_control_mode" value="0" />
+  <rosparam file="$(find sim2log_motek)/etc/ur_modern_driver.yaml" command="load"></rosparam>
+
+</launch>
+
