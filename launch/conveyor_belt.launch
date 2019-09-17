@@ -1,0 +1,11 @@
+<launch>
+  <!-- Everything that's somewhat conveyor belt related should go into this file -->
+  <arg name="sim" default="True"/>
+  <group unless="$(arg sim)" ns="conveyor_belt">
+
+    <!-- Conveyor belt driver and behavior -->
+    <include file="$(find geppert_canopen_driver)/launch/geppert_canopen_driver.launch"/>
+    <include file="$(find conveyor_belt_control)/launch/run_conveyor_control.launch"/>
+
+  </group>
+</launch>
