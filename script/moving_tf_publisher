@@ -1,0 +1,75 @@
+#!/usr/bin/env python
+import roslib
+import rospy
+
+import tf
+
+from geometry_msgs.msg import PoseStamped
+
+x = 0.7
+y = 0.3
+z = 0.35
+
+#def handle_turtle_pose(msg, turtlename):
+    #br = tf.TransformBroadcaster()
+    #br.sendTransform((msg.x, msg.y, 0),
+    #                 tf.transformations.quaternion_from_euler(0, 0, msg.theta),
+    #                 rospy.Time.now(),
+    #                 turtlename,
+    #                 "world")
+
+if __name__ == '__main__':
+    rospy.init_node('moving_tf_publisher')
+    #speed = rospy.get_param('~speed')
+    #rospy.Subscriber('/%s/pose' % turtlename,
+    #                  turtlesim.msg.Pose,
+    #                  handle_turtle_pose,
+    #                 turtlename)
+
+    pose_pub = rospy.Publisher('target_frame', PoseStamped, queue_size=10)
+
+    br = tf.TransformBroadcaster()
+    tf_listener = tf.TransformListener()
+
+    rate = rospy.Rate(10) # 10hz
+    while not rospy.is_shutdown():
+        x = x + 0.004
+        if x >= 1.2:
+            x = 0.7
+
+        quaternion = tf.transformations.quaternion_from_euler(3.14, 0, 0)
+
+        br.sendTransform((x, y, z), quaternion, rospy.Time.now(), "part", "world")
+
+        pose_msg = PoseStamped()
+        pose_msg.header.frame_id = "world"
+        pose_msg.pose.position.x = x
+        pose_msg.pose.position.y = y
+        pose_msg.pose.position.z = z
+        pose_msg.pose.orientation.x = quaternion[0]
+        pose_msg.pose.orientation.x = quaternion[1]
+        pose_msg.pose.orientation.x = quaternion[2]
+        pose_msg.pose.orientation.x = quaternion[3]
+
+        #while not rospy.is_shutdown():
+            #    try:
+            #        #pose_msg  = tf_listener.transformPose("ur10_base_link", pose_msg)
+        #	tf_listener.lookupTransform('ur10_base_link', 'world', rospy.Time(0))
+            #    except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
+            #        continue
+
+        tf_listener.waitForTransform("world", "ur10_base_link", rospy.Time(), rospy.Duration(4.0))
+        pose_msg  = tf_listener.transformPose("ur10_base_link", pose_msg)
+
+        quaternion = tf.transformations.quaternion_from_euler(3.14, 0, 1.57)
+
+        pose_msg.pose.orientation.x = quaternion[0]
+        pose_msg.pose.orientation.y = quaternion[1]
+        pose_msg.pose.orientation.z = quaternion[2]
+        pose_msg.pose.orientation.w = quaternion[3]
+
+        pose_pub.publish(pose_msg)
+
+        rate.sleep()
+
+    #rospy.spin()
