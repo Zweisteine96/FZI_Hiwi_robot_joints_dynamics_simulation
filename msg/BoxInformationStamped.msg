@@ -1,0 +1,2 @@
+string box_type
+geometry_msgs/PoseStamped pose_stamped
