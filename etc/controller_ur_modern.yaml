@@ -12,7 +12,7 @@ cartesian_motion_controller:
     - ur10_wrist_3_joint
 
     solver:
-        mass: 5.0
+        mass: 15.0
         inertia: 0.05
 
     pid_gains:

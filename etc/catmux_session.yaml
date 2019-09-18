@@ -62,6 +62,8 @@ windows:
         - rosrun sim2log_motek_launch parameters_manager_node
       - commands:
         - rosrun sim2log_motek_launch part_selection_node
+      - commands:
+        - rosrun sim2log_motek_launch target_publisher
 
   - name: state_machine
     layout: tiled
