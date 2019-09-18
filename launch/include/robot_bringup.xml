@@ -41,7 +41,7 @@
             </node>
 
             <!-- Load controller settings for the ur_modern_driver -->
-            <rosparam file="$(find sim2log_motek)/etc/ur_modern_driver.yaml" command="load"></rosparam>
+            <rosparam file="$(find sim2log_motek_launch)/etc/ur_modern_driver.yaml" command="load"></rosparam>
           </group>
 
           <group unless="$(arg use_ur_modern_driver)" >
@@ -49,7 +49,7 @@
             <!-- TODO:    base_frame and tool_frame parameters?   -->
 
             <!-- arg name="controller_config_file" default="$(find ur_rtde_driver)/config/ur10_controllers.yaml"/ -->
-            <arg name="controller_config_file" default="$(find sim2log_motek)/etc/ur_modern_driver.yaml"/>
+            <arg name="controller_config_file" default="$(find sim2log_motek_launch)/etc/ur_modern_driver.yaml"/>
             <arg name="kinematics_config" default="$(find ids_ur_launch)/calibrations/ids-ur10-3_calibration.yaml"/>
             <arg name="controllers" default="joint_trajectory_controller joint_state_controller"/>
             <include file="$(find ur_rtde_driver)/launch/ur_control.launch">

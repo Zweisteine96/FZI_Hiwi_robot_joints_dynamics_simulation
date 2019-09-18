@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(sim2log_motek)
+project(sim2log_motek_launch)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
 # add_compile_options(-std=c++11)
@@ -108,7 +108,7 @@ generate_messages(
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
 #  INCLUDE_DIRS include
-#  LIBRARIES sim2log_motek
+#  LIBRARIES sim2log_motek_launch
   CATKIN_DEPENDS geometry_msgs roscpp rospy std_msgs std_srvs tf message_runtime
 #  DEPENDS system_lib
 )
@@ -126,7 +126,7 @@ include_directories(
 
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}
-#   src/${PROJECT_NAME}/sim2log_motek.cpp
+#   src/${PROJECT_NAME}/sim2log_motek_launch.cpp
 # )
 
 ## Add cmake target dependencies of the library
@@ -137,7 +137,7 @@ include_directories(
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-# add_executable(${PROJECT_NAME}_node src/sim2log_motek_node.cpp)
+# add_executable(${PROJECT_NAME}_node src/sim2log_motek_launch_node.cpp)
 
 add_executable(part_selection_node src/part_selection_node.cpp)
 target_link_libraries(part_selection_node ${catkin_LIBRARIES})
@@ -206,7 +206,7 @@ add_dependencies(parameters_manager_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${c
 #############
 
 ## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_sim2log_motek.cpp)
+# catkin_add_gtest(${PROJECT_NAME}-test test/test_sim2log_motek_launch.cpp)
 # if(TARGET ${PROJECT_NAME}-test)
 #   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
 # endif()

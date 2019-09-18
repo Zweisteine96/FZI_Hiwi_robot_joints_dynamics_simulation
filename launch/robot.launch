@@ -3,7 +3,7 @@
         <arg name="sim" default="True"/>
 
         <!-- Load controller configuration -->
-        <rosparam file="$(find sim2log_motek)/etc/controller_ur_modern.yaml" command="load"></rosparam>
+        <rosparam file="$(find sim2log_motek_launch)/etc/controller_ur_modern.yaml" command="load"></rosparam>
 
         <!-- Spawn controllers -->
         <node name="running_controller_spawner" pkg="controller_manager" type="spawner"
@@ -13,11 +13,11 @@
                 " />
 
         <group if="$(arg sim)" >
-                <include file="$(find sim2log_motek)/launch/include/robot_bringup_simulation.xml"/>
+                <include file="$(find sim2log_motek_launch)/launch/include/robot_bringup_simulation.xml"/>
         </group>
 
         <group unless="$(arg sim)" >
-                <include file="$(find sim2log_motek)/launch/include/robot_bringup.xml"/>
+                <include file="$(find sim2log_motek_launch)/launch/include/robot_bringup.xml"/>
         </group>
 
 </launch>

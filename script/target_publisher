@@ -5,7 +5,7 @@ import rospy
 import tf
 
 from geometry_msgs.msg import PoseStamped
-from sim2log_motek.msg import BoxInformationStamped
+from box_info_msgs.msg import BoxInformationStamped
 
 x_min = 0.3
 x_max = 0.5
