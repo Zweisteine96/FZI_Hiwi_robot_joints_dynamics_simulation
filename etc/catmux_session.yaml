@@ -26,7 +26,7 @@ windows:
   - name: kinematics
     splits:
       - commands:
-        - roslaunch sim2log_motek kinematics.launch
+        - roslaunch sim2log_motek_launch kinematics.launch
     delay: 1
   - name: hardware
     splits:
@@ -35,18 +35,18 @@ windows:
         - ce motek_sim2log
         - export ROS_MASTER_URI=http://192.168.1.3:11311
         - export ROS_IP=192.168.1.10
-        - roslaunch sim2log_motek robot.launch sim:=${sim}
+        - roslaunch sim2log_motek_launch robot.launch sim:=${sim}
       - commands:
-        - roslaunch sim2log_motek gripper.launch sim:=${sim}
+        - roslaunch sim2log_motek_launch gripper.launch sim:=${sim}
       - commands:
         - sleep 3
-        - roslaunch sim2log_motek controller_spawner.launch
+        - roslaunch sim2log_motek_launch controller_spawner.launch
       - commands:
-        - roslaunch sim2log_motek conveyor_belt.launch sim:=${sim}
+        - roslaunch sim2log_motek_launch conveyor_belt.launch sim:=${sim}
   - name: motion_pipeline
     splits:
      - commands:
-       - roslaunch sim2log_motek motion_pipeline.launch
+       - roslaunch sim2log_motek_launch motion_pipeline.launch
     delay: 5
   - name: rviz
     splits:
@@ -59,9 +59,9 @@ windows:
     layout: tiled
     splits:
       - commands:
-        - rosrun sim2log_motek parameters_manager_node
+        - rosrun sim2log_motek_launch parameters_manager_node
       - commands:
-        - rosrun sim2log_motek part_selection_node
+        - rosrun sim2log_motek_launch part_selection_node
 
   - name: state_machine
     layout: tiled
