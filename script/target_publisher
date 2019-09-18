@@ -24,10 +24,6 @@ def boxInfoCallback(data):
     tf_listener = tf.TransformListener()
 
     tf_listener.waitForTransform(pose_msg.header.frame_id, "ur10_base_link", rospy.Time(), rospy.Duration(4.0))
-    pose_msg = tf_listener.transformPose("ur10_base_link", pose_msg)
-
-
-    tf_listener.waitForTransform("world", "ur10_base_link", rospy.Time(), rospy.Duration(4.0))
     target_pose = tf_listener.transformPose("ur10_base_link", pose_msg)
 
     quaternion = tf.transformations.quaternion_from_euler(3.14, 0, 1.57)
@@ -48,6 +44,6 @@ if __name__ == '__main__':
     rospy.init_node('target_publisher')
 
     pose_pub = rospy.Publisher('target_frame', PoseStamped, queue_size=10)
-    box_sub = rospy.Subscriber('box_info', BoxInformationStamped, boxInfoCallback)
+    box_sub = rospy.Subscriber('tp_box_pose', BoxInformationStamped, boxInfoCallback)
 
     rospy.spin()
