@@ -7,7 +7,7 @@
         <arg name="endeffector_frame" default="ur10_tool0"/>
         <arg name="controller_namespace" default="/joint_trajectory_controller" />
         <arg name="controller_topic_name" default="follow_joint_trajectory" />
-        <arg name="trajectory_folder" default="$(find sim2log_motek_launch)/trajectories" />
+        <arg name="trajectory_folder" default="$(find ar_conveyor_launch)/trajectories" />
         <arg name="debug" default="false" />
         <arg name="pose_topic_name" default="/robot/target_frame"/>
         <arg name="pose_publishing_rate" default="400"/>

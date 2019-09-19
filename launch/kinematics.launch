@@ -2,8 +2,8 @@
 <launch>
 
   <!-- Load robot description from xacro file -->
-  <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find sim2log_motek_description)/urdf/motek_scene.urdf.xacro'" />
-  <param name="robot_description_semantic" textfile="$(find sim2log_motek_description)/srdf/pathloader.srdf"/>
+  <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find ar_conveyor_description)/urdf/motek_scene.urdf.xacro'" />
+  <param name="robot_description_semantic" textfile="$(find ar_conveyor_description)/srdf/pathloader.srdf"/>
 
   <!-- Publish joint state as tf transforms -->
   <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher">

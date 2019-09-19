@@ -6,7 +6,7 @@
   <node name="sim_hardware_interface" pkg="ros_control_boilerplate" type="sim_hw_main"
         output="screen" />
   <param name="hardware_interface/sim_control_mode" value="0" />
-  <rosparam file="$(find sim2log_motek_launch)/etc/ur_modern_driver.yaml" command="load"></rosparam>
+  <rosparam file="$(find ar_conveyor_launch)/etc/ur_modern_driver.yaml" command="load"></rosparam>
 
 </launch>
 
