@@ -51,7 +51,7 @@ windows:
   - name: rviz
     splits:
       - commands:
-          - rviz
+          - roslaunch ar_conveyor_launch visualization.launch
       - commands: 
           - rqt
           
