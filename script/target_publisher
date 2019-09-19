@@ -19,14 +19,23 @@ def clamp(val, minv, maxv):
     return minv if val < minv else maxv if val > maxv else val
 
 def boxInfoCallback(data):
-    pose_msg = data.pose_stamped
+    target_pose = data.pose_stamped
 
-    tf_listener = tf.TransformListener()
+    #pose_msg = data.pose_stamped
 
-    tf_listener.waitForTransform(pose_msg.header.frame_id, "ur10_base_link", rospy.Time(), rospy.Duration(4.0))
-    target_pose = tf_listener.transformPose("ur10_base_link", pose_msg)
+    #tf_listener = tf.TransformListener()
+
+    #tf_listener.waitForTransform(pose_msg.header.frame_id, "ur10_base_link", rospy.Time(), rospy.Duration(4.0))
+    #target_pose = tf_listener.transformPose("ur10_base_link", pose_msg)
 
     quaternion = tf.transformations.quaternion_from_euler(3.14, 0, 1.57)
+
+    if (target_pose.pose.position.x < x_min) or (target_pose.pose.position.x > x_max):
+        return
+    if (target_pose.pose.position.y < y_min) or (target_pose.pose.position.y > y_max):
+        return
+    if (target_pose.pose.position.z < z_min) or (target_pose.pose.position.z > z_max):
+        return
 
     target_pose.pose.position.x = clamp(target_pose.pose.position.x, x_min, x_max)
     target_pose.pose.position.y = clamp(target_pose.pose.position.y, y_min, y_max)
