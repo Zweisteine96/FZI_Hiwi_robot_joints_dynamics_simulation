@@ -7,15 +7,12 @@
 
 class ParametersManager {
  private:
-  tf::TransformBroadcaster br;
-  std::string target_tf;
   ros::NodeHandle nh_;
   ros::NodeHandle nh_private_;
   ros::Subscriber update_robot_speed_sub_;
   ros::ServiceClient update_robot_speed_client_;
-  std::string base_name;
-  std::string target_name;
-  tf::Vector3 random_point;
+  double vel_min_;
+  double vel_max_;
 
  public:
   ParametersManager():
@@ -24,31 +21,18 @@ class ParametersManager {
   {
       update_robot_speed_client_ = nh_.serviceClient<fzi_manipulation_msgs::TrajectoryDesignerSettings>("pathloader/updateSettings");
       update_robot_speed_sub_ = nh_.subscribe("update_robot_speed", 10, &ParametersManager::updateRobotSpeed, this);
-//     ros::param::param<std::string>("~target_tf", target_name, "random_people");
-//     ros::param::param<std::string>("~base_tf", base_name, "base_link");
+      ros::param::param<double>("~vel_min", vel_min_, 0.1);
+      ros::param::param<double>("~vel_max", vel_max_, 0.6);
   }
 
   void updateRobotSpeed(const std_msgs::Float32::ConstPtr& msg)
   {
     fzi_manipulation_msgs::TrajectoryDesignerSettings settings;
-    settings.request.velocity = msg->data;
-    settings.request.acceleration = msg->data * 4;
+    double vel = vel_min_ + (vel_max_ * msg->data);
+    settings.request.velocity = vel;
+    settings.request.acceleration = vel * 4;
     update_robot_speed_client_.call(settings);
-//     tf::Quaternion q(0,0,0,1);
-//     tf::StampedTransform random_people(tf::Transform(), ros::Time::now(), base_name, target_name);
-//     random_people.setOrigin(random_point);
-//     random_people.setRotation(q);
-//     br.sendTransform(random_people);
   }
-
-//   void publish()
-//   {
-// //     tf::Quaternion q(0,0,0,1);
-// //     tf::StampedTransform random_people(tf::Transform(), ros::Time::now(), base_name, target_name);
-// //     random_people.setOrigin(random_point);
-// //     random_people.setRotation(q);
-// //     br.sendTransform(random_people);
-//   }
 };
 
 int main(int argc, char** argv) {
@@ -59,8 +43,6 @@ int main(int argc, char** argv) {
 
   while (ros::ok())
   {
-//     pm.publish();
-
     ros::spinOnce();
 
     r.sleep();
