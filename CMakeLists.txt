@@ -60,7 +60,7 @@ add_message_files(
 ## Generate services in the 'srv' folder
 add_service_files(
   FILES
-  PartSelection.srv
+  EnableGrasping.srv
 )
 
 ## Generate actions in the 'action' folder
@@ -139,17 +139,13 @@ include_directories(
 ## The recommended prefix ensures that target names across packages don't collide
 # add_executable(${PROJECT_NAME}_node src/ar_conveyor_launch_node.cpp)
 
-add_executable(part_selection_node src/part_selection_node.cpp)
-target_link_libraries(part_selection_node ${catkin_LIBRARIES})
-add_dependencies(part_selection_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS} custom_msg_generate_messages_cpp)
-
 add_executable(parameters_manager_node src/parameters_manager_node.cpp)
 target_link_libraries(parameters_manager_node ${catkin_LIBRARIES})
 add_dependencies(parameters_manager_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS} custom_msg_generate_messages_cpp)
 
-# add_executable(robot_target_publisher_node src/robot_target_publisher_node.cpp)
-# target_link_libraries(robot_target_publisher_node ${catkin_LIBRARIES})
-# add_dependencies(robot_target_publisher_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS} custom_msg_generate_messages_cpp)
+add_executable(target_publisher_node src/target_publisher_node.cpp)
+target_link_libraries(target_publisher_node ${catkin_LIBRARIES})
+add_dependencies(target_publisher_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS} custom_msg_generate_messages_cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
