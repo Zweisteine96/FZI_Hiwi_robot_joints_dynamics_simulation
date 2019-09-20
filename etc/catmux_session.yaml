@@ -59,11 +59,7 @@ windows:
     layout: tiled
     splits:
       - commands:
-        - rosrun ar_conveyor_launch parameters_manager_node
-      - commands:
-        - rosrun ar_conveyor_launch part_selection_node
-      - commands:
-        - rosrun ar_conveyor_launch target_publisher
+        - roslaunch ar_conveyor_launch high_level.launch
 
   - name: state_machine
     layout: tiled
