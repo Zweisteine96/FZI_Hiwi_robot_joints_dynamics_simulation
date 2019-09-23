@@ -1,0 +1,21 @@
+# Settings for ros_control control loop
+hardware_control_loop:
+   loop_hz: 125
+
+# Settings for ros_control hardware interface
+hardware_interface:
+   joints:
+     - virtual_wsg_25_gripper_base_joint_gripper_left
+
+# Publish all joint states ----------------------------------
+gripper_joint_state_controller:
+   type:         joint_state_controller/JointStateController
+   publish_rate: 50
+
+# Joint Trajectory Controller - position based -------------------------------
+# For detailed explanations of parameter see http://wiki.ros.org/joint_trajectory_controller
+gripper_pos_based_traj_controller:
+   type: position_controllers/JointTrajectoryController
+   publish_rate: 50
+   joints:
+     - virtual_wsg_25_gripper_base_joint_gripper_left

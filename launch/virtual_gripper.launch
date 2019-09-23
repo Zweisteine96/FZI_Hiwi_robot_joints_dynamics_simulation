@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<launch>
+        <!-- Arguments-->
+        <arg name="sim" default="True"/>
+
+        <arg name="gripper_trajectory_controller_name" default="gripper_pos_based_traj_controller" />
+
+        <group ns="gripper_control_node">
+            <group if="$(arg sim)" >
+                <!-- simulation with ros control boilerplate -->
+                <param name="generic_hw_control_loop/loop_hz" value="100" />
+                <param name="generic_hw_control_loop/cycle_time_error_threshold" value="0.03" />
+                <!-- Load hardware interface -->
+                <node name="gripper_sim_hardware_interface" pkg="ros_control_boilerplate" type="sim_hw_main"
+                    output="screen">
+                <remap from="joint_states" to="joint_states"/>
+                </node>
+                <param name="hardware_interface/sim_control_mode" value="0" />
+                <!-- Load Hardware Configuration -->
+                <rosparam file="$(find ar_conveyor_launch)/etc/virtual_gripper_sim_boilerplate.yaml" command="load"></rosparam>
+        
+            <!-- ROS_Control Controllers -->
+            <rosparam file="$(find ar_conveyor_launch)/etc/virtual_gripper_controllers.yaml" command="load"/>
+            <node name="gripper_controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
+                    output="screen" args="--timeout 90 gripper_joint_state_controller $(arg gripper_trajectory_controller_name)"/>
+            </group>
+
+            <group unless="$(arg sim)" >
+                <include file="$(find fzi_weiss_controller)/launch/weiss_wsg_25_controller.launch">
+                </include>
+	    </group>
+
+        </group>
+</launch>

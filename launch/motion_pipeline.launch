@@ -1,17 +1,17 @@
 <?xml version="1.0"?>
 <launch>
 
-        <arg name="prefix" default="ur10" />
+        <arg name="prefix" default="ur10_" />
         <arg name="base_frame" default="$(arg prefix)base_link" />
         <arg name="tool_frame" default="$(arg prefix)tool0" />
-        <arg name="endeffector_frame" default="ur10_tool0"/>
+        <arg name="endeffector_frame" default="$(arg prefix)tool0"/>
         <arg name="controller_namespace" default="/joint_trajectory_controller" />
         <arg name="controller_topic_name" default="follow_joint_trajectory" />
         <arg name="trajectory_folder" default="$(find ar_conveyor_launch)/trajectories" />
         <arg name="debug" default="false" />
-        <arg name="pose_topic_name" default="/robot/target_frame"/>
+        <arg name="pose_topic_name" default="robot/target_frame"/>
         <arg name="pose_publishing_rate" default="400"/>
-        <arg name="robot_control_reference_frame" default="ur10_base_link"/>
+        <arg name="robot_control_reference_frame" default="$(arg prefix)base_link"/>
 
         <!-- Motion pipeline -->
         <include file="$(find motion_launch)/launch/motion_pipeline.launch" >

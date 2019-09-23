@@ -47,19 +47,28 @@ windows:
     splits:
      - commands:
        - roslaunch ar_conveyor_launch motion_pipeline.launch
-    delay: 5
-  - name: rviz
+
+  - name: virtual_robot
     splits:
       - commands:
-          - roslaunch ar_conveyor_launch visualization.launch
-      - commands: 
-          - rqt
-          
+        - sleep 2
+        - roslaunch ar_conveyor_launch virtual_robot.launch
+      - commands:
+        - sleep 5
+        - roslaunch ar_conveyor_launch controller_spawner.launch __ns:=virtual_ur10
+
   - name: high_level
     layout: tiled
     splits:
       - commands:
         - roslaunch ar_conveyor_launch high_level.launch
+    delay: 10
+  - name: rviz
+    splits:
+      - commands:
+          - roslaunch ar_conveyor_launch visualization.launch
+      - commands:
+          - rqt
 
   - name: state_machine
     layout: tiled

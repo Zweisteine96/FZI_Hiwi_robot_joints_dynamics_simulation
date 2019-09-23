@@ -1,0 +1,88 @@
+<?xml version="1.0"?>
+<launch>
+
+    <group ns="virtual_ur10">
+
+        <arg name="sim" default="true" />
+        <arg name="prefix" default="virtual_ur10_" />
+        <arg name="base_frame" default="$(arg prefix)base_link" />
+        <arg name="tool_frame" default="$(arg prefix)tool0" />
+        <arg name="endeffector_frame" default="$(arg prefix)tool0"/>
+        <arg name="controller_namespace" default="joint_trajectory_controller" />
+        <arg name="controller_topic_name" default="follow_joint_trajectory" />
+        <arg name="trajectory_folder" default="$(find ar_conveyor_launch)/trajectories" />
+        <arg name="debug" default="false" />
+        <arg name="pose_topic_name" default="/virtual_robot/target_frame"/>
+        <arg name="pose_publishing_rate" default="400"/>
+        <arg name="robot_control_reference_frame" default="$(arg prefix)base_link"/>
+
+
+        <!-- Load robot description from xacro file -->
+        <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find ar_conveyor_description)/urdf/virtual_ur10.urdf.xacro'" />
+        <param name="robot_description_semantic" textfile="$(find ar_conveyor_description)/srdf/virtual_pathloader.srdf"/>
+
+        <!-- Publish joint state as tf transforms -->
+        <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher">
+            <param name="publish_frequency" type="double" value="50.0" />
+            <param name="tf_prefix" type="string" value="" />
+            <param name="use_tf_static" value="false" />
+        </node>
+
+
+        <!-- Robot -->
+        <!-- include file="$(find ar_conveyor_launch)/launch/robot.launch" >
+          <arg name="sim" value="$(arg sim)" />
+        </include -->
+
+        <remap from="/robot_description" to="/virtual_ur10/robot_description"/>
+
+        <!-- Load controller configuration -->
+        <rosparam file="$(find ar_conveyor_launch)/etc/virtual_controller_ur_modern.yaml" command="load"></rosparam>
+
+        <!-- Spawn controllers -->
+        <node name="running_controller_spawner" pkg="controller_manager" type="spawner"
+                args="
+                joint_state_controller
+                joint_trajectory_controller
+                " />
+
+        <param name="generic_hw_control_loop/loop_hz" value="100" />
+        <param name="generic_hw_control_loop/cycle_time_error_threshold" value="0.03" />
+
+        <!-- Load hardware interface -->
+        <node name="sim_hardware_interface" pkg="ros_control_boilerplate" type="sim_hw_main"
+                output="screen" />
+        <param name="hardware_interface/sim_control_mode" value="0" />
+        <rosparam file="$(find ar_conveyor_launch)/etc/virtual_ur_modern_driver.yaml" command="load"></rosparam>
+
+        <!-- Gripper -->
+        <include file="$(find ar_conveyor_launch)/launch/virtual_gripper.launch" >
+          <arg name="sim" value="$(arg sim)" />
+        </include>
+
+
+        <!-- Motion pipeline -->
+        <include file="$(find motion_launch)/launch/motion_pipeline.launch" >
+          <arg name="controller_namespace" value="$(arg controller_namespace)" />
+          <arg name="trac_ik_chain_start" value="$(arg base_frame)" />
+          <arg name="trac_ik_chain_end" value="$(arg endeffector_frame)" />
+          <arg name="debug" value="$(arg debug)" />
+          <arg name="trajectory_folder" value="$(arg trajectory_folder)" />
+          <arg name="pose_publishing_rate" value="$(arg pose_publishing_rate)"/>
+          <arg name="robot_control_reference_frame" value="$(arg base_frame)"/>
+        </include>
+
+
+        <include file="$(find ar_conveyor_launch)/launch/high_level.launch" >  
+          <arg name="x_min" value="0.3"/>
+          <arg name="x_max" value="0.5"/>
+          <arg name="y_min" value="-1.1"/>
+          <arg name="y_max" value="-0.8"/>
+          <arg name="z_min" value="0.22"/>
+          <arg name="z_max" value="0.4"/>
+          <arg name="base_frame" value="ur10_base_link"/>
+          <arg name="end_effector_frame" value="virtual_ur10_tool0"/>
+        </include>
+
+    </group>
+</launch>

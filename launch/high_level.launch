@@ -10,6 +10,9 @@
   <arg name="z_min" default="0.22"/>
   <arg name="z_max" default="0.4"/>
 
+  <arg name="base_frame" default="ur10_base_link"/>
+  <arg name="end_effector_frame" default="ur10_tool0"/>
+
   <node name="parameters_manager_node" pkg="ar_conveyor_launch" type="parameters_manager_node" respawn="false" output="screen">
     <param name="vel_min" value="$(arg vel_min)"/>
     <param name="vel_max" value="$(arg vel_max)"/>
@@ -22,6 +25,8 @@
     <param name="y_max" value="$(arg y_max)"/>
     <param name="z_min" value="$(arg z_min)"/>
     <param name="z_max" value="$(arg z_max)"/>
+    <param name="base_frame" value="$(arg base_frame)"/>
+    <param name="end_effector_frame" value="$(arg end_effector_frame)"/>
   </node>
   
 </launch>

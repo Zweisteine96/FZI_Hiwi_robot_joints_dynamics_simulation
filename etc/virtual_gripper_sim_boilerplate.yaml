@@ -1,0 +1,11 @@
+generic_hw_control_loop:
+  loop_hz: 300
+  cycle_time_error_thershold: 0.01
+# Settings for ros_control control loop
+#hardware_control_loop:
+#   loop_hz: 125
+
+# Settings for ros_control hardware interface
+hardware_interface:
+   joints:
+     - virtual_wsg_25_gripper_base_joint_gripper_left

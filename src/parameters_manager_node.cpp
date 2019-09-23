@@ -20,7 +20,7 @@ class ParametersManager {
       nh_private_("~")
   {
       update_robot_speed_client_ = nh_.serviceClient<fzi_manipulation_msgs::TrajectoryDesignerSettings>("pathloader/updateSettings");
-      update_robot_speed_sub_ = nh_.subscribe("update_robot_speed", 10, &ParametersManager::updateRobotSpeed, this);
+      update_robot_speed_sub_ = nh_.subscribe("/update_robot_speed", 10, &ParametersManager::updateRobotSpeed, this);
       ros::param::param<double>("~vel_min", vel_min_, 0.1);
       ros::param::param<double>("~vel_max", vel_max_, 0.6);
   }
