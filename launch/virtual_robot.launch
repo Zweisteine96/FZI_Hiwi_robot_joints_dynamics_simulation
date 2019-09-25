@@ -75,12 +75,12 @@
 
         <include file="$(find ar_conveyor_launch)/launch/high_level.launch" >  
           <arg name="x_min" value="0.3"/>
-          <arg name="x_max" value="0.5"/>
-          <arg name="y_min" value="-1.1"/>
-          <arg name="y_max" value="-0.8"/>
+          <arg name="x_max" value="0.6"/>
+          <arg name="y_min" value="-0.5"/>
+          <arg name="y_max" value="0.0"/>
           <arg name="z_min" value="0.22"/>
           <arg name="z_max" value="0.4"/>
-          <arg name="base_frame" value="ur10_base_link"/>
+          <arg name="base_frame" value="virtual_ur10_base_link"/>
           <arg name="end_effector_frame" value="virtual_ur10_tool0"/>
         </include>
 

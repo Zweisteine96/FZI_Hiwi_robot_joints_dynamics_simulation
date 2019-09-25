@@ -1,6 +1,6 @@
 --- name: virtual_ur10_home
 --- type: joint_based
---- date: 2019-Sep-23 11:59:33.116755
+--- date: 2019-Sep-24 15:15:49.679130
 --- reference_frame: 
  ur10_shoulder_pan_joint ur10_shoulder_lift_joint ur10_elbow_joint ur10_wrist_1_joint ur10_wrist_2_joint ur10_wrist_3_joint
-2.334		-1.556		-2.125		-0.945		1.577		2.316		wp	0
+2.334		-1.556		-2.125		-0.945		1.577		-0.8		wp	0

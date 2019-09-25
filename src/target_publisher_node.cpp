@@ -42,28 +42,33 @@ class TargetPublisher {
       ros::param::param<std::string>("~end_effector_frame", end_effector_frame_, "tool0");
 
       robot_target_pub_ = nh_.advertise<geometry_msgs::PoseStamped>("target_frame", 1);
-      part_info_sub_ = nh_.subscribe("/tp_box_pose", 1, &TargetPublisher::getPartInfo, this);
+      part_info_sub_ = nh_.subscribe("tp_box_pose", 1, &TargetPublisher::getPartInfo, this);
       enable_grasping_client_ = nh_.serviceClient<ar_conveyor_launch::EnableGrasping>("enable_grasping");
-      
+
       robot_target_.pose.orientation =  tf::createQuaternionMsgFromRollPitchYaw(3.14, 0, 1.57);      
   }
-  
+
   void getPartInfo(const box_info_msgs::BoxInformationStamped::ConstPtr& part_msg)
-  {    
+  {
     if( (part_msg->pose_stamped.pose.position.x < x_min_) || (part_msg->pose_stamped.pose.position.x > x_max_) || 
         (part_msg->pose_stamped.pose.position.y < y_min_) || (part_msg->pose_stamped.pose.position.y > y_max_) )
     {
       return;
     }
-    
+
+    part_type_ = part_msg->box_type;
+
     robot_target_.pose.position.x = part_msg->pose_stamped.pose.position.x;
     robot_target_.pose.position.y = part_msg->pose_stamped.pose.position.y;
     // robot_target_.pose.position.z = part_msg->pose_stamped.pose.position.z;
     robot_target_.pose.position.z = z_min_;
 
+//     if(part_type_.compare("TypeB") == 0)
+//     {
+//       robot_target_.pose.position.z += 0.02;
+//     }
+
     robot_target_pub_.publish(robot_target_);
-    
-    part_type_ = part_msg->box_type;
   }
 
 
@@ -79,18 +84,18 @@ class TargetPublisher {
       ROS_ERROR("%s",ex.what());
       ros::Duration(1.0).sleep();
     }
-    
+
     double x_tool, y_tool, z_tool, x_target, y_target, z_target, dist;
     x_tool = transform.getOrigin().x();
     y_tool = transform.getOrigin().y();
     z_tool = transform.getOrigin().z();
-    
+
     x_target = robot_target_.pose.position.x;
     y_target = robot_target_.pose.position.y;
     z_target = robot_target_.pose.position.z;
-    
+
     dist = sqrt((x_tool-x_target)*(x_tool-x_target) + (y_tool-y_target)*(y_tool-y_target) + (z_tool-z_target)*(z_tool-z_target));
-    
+
     std::cout << dist << std::endl;
 
     if(dist < 0.02)
@@ -110,7 +115,7 @@ class TargetPublisher {
 
 int main(int argc, char** argv) {
   ros::init(argc, argv, "target_publisher_node");
-  
+
   TargetPublisher ps;
 
   ros::Rate r(10);
