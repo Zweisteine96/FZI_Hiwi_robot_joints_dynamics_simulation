@@ -1,9 +1,12 @@
 #include <ros/ros.h>
 #include <tf/transform_listener.h>
+#include <std_msgs/Bool.h>
 #include <geometry_msgs/Vector3.h>
 #include <geometry_msgs/PoseStamped.h>
 #include <ar_conveyor_launch/EnableGrasping.h>
 #include <box_info_msgs/BoxInformationStamped.h>
+#include <dynamic_reconfigure/Reconfigure.h>
+#include <dynamic_reconfigure/DoubleParameter.h>
 
 class TargetPublisher {
  private:
@@ -11,13 +14,16 @@ class TargetPublisher {
   ros::NodeHandle nh_private_;
   ros::Publisher robot_target_pub_;
   ros::Subscriber part_info_sub_;
+  ros::Subscriber update_controller_sub_;
   ros::ServiceClient enable_grasping_client_;
+  ros::ServiceClient dynamic_reconfigure_client_;
   ros::ServiceServer part_selection_service_;
   tf::TransformListener listener_;
   geometry_msgs::PoseStamped robot_target_;
   std::string base_frame_;
   std::string end_effector_frame_;
   std::string part_type_;
+  bool controller_updated_;
 
   double x_min_;
   double x_max_;
@@ -43,9 +49,13 @@ class TargetPublisher {
 
       robot_target_pub_ = nh_.advertise<geometry_msgs::PoseStamped>("target_frame", 1);
       part_info_sub_ = nh_.subscribe("tp_box_pose", 1, &TargetPublisher::getPartInfo, this);
+      update_controller_sub_ = nh_.subscribe("update_controller", 1, &TargetPublisher::updateController, this);
       enable_grasping_client_ = nh_.serviceClient<ar_conveyor_launch::EnableGrasping>("enable_grasping");
+      dynamic_reconfigure_client_ = nh_.serviceClient<dynamic_reconfigure::Reconfigure>("cartesian_motion_controller/solver/set_parameters");
 
-      robot_target_.pose.orientation =  tf::createQuaternionMsgFromRollPitchYaw(3.14, 0, 1.57);      
+      robot_target_.pose.orientation =  tf::createQuaternionMsgFromRollPitchYaw(3.14, 0, 1.57);
+
+      controller_updated_ = false;
   }
 
   void getPartInfo(const box_info_msgs::BoxInformationStamped::ConstPtr& part_msg)
@@ -69,6 +79,11 @@ class TargetPublisher {
 //     }
 
     robot_target_pub_.publish(robot_target_);
+  }
+
+  void updateController(std_msgs::Bool msg)
+  {
+    controller_updated_ = msg.data;
   }
 
 
@@ -96,7 +111,18 @@ class TargetPublisher {
 
     dist = sqrt((x_tool-x_target)*(x_tool-x_target) + (y_tool-y_target)*(y_tool-y_target) + (z_tool-z_target)*(z_tool-z_target));
 
-    std::cout << dist << std::endl;
+    if(dist < 0.10 && !controller_updated_)
+    {
+      dynamic_reconfigure::Reconfigure reconf_srv;
+      dynamic_reconfigure::DoubleParameter double_param;
+      double_param.name = "mass";
+      double_param.value = 5.0;
+      reconf_srv.request.config.doubles.push_back(double_param);
+      dynamic_reconfigure_client_.call(reconf_srv);
+
+      controller_updated_ = true;
+    }
+
 
     if(dist < 0.02)
     {
@@ -105,11 +131,6 @@ class TargetPublisher {
       enable_grasping_client_.call(srv);
     }
 
-//     tf::Quaternion q(0,0,0,1);
-//     tf::StampedTransform random_people(tf::Transform(), ros::Time::now(), base_name, target_name);
-//     random_people.setOrigin(random_point);
-//     random_people.setRotation(q);
-//     br.sendTransform(random_people);
   }
 };
 
