@@ -147,6 +147,10 @@ add_executable(target_publisher_node src/target_publisher_node.cpp)
 target_link_libraries(target_publisher_node ${catkin_LIBRARIES})
 add_dependencies(target_publisher_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS} custom_msg_generate_messages_cpp)
 
+add_executable(robots_synchronization_node src/robots_synchronization_node.cpp)
+target_link_libraries(robots_synchronization_node ${catkin_LIBRARIES})
+add_dependencies(robots_synchronization_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS} custom_msg_generate_messages_cpp)
+
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
 ## target back to the shorter version for ease of user use
