@@ -62,6 +62,8 @@ windows:
     splits:
       - commands:
         - roslaunch ar_conveyor_launch high_level.launch
+      - commands:
+        - rosrun ar_conveyor_launch robots_synchronization_node
     delay: 10
   - name: rviz
     splits:
