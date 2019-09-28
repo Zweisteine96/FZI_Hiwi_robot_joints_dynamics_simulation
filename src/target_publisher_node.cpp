@@ -31,6 +31,7 @@ class TargetPublisher {
   double y_max_;
   double z_min_;
   double z_max_;
+  double controller_mass_;
 
  public:
   TargetPublisher():
@@ -43,6 +44,8 @@ class TargetPublisher {
       ros::param::param<double>("~y_max", y_max_, -0.3);
       ros::param::param<double>("~z_min", z_min_, 0.22);
       ros::param::param<double>("~z_max", z_max_, 0.4);
+
+      ros::param::param<double>("~controller_mass", controller_mass_, 3.0);
 
       ros::param::param<std::string>("~base_frame", base_frame_, "base_link");
       ros::param::param<std::string>("~end_effector_frame", end_effector_frame_, "tool0");
@@ -73,10 +76,12 @@ class TargetPublisher {
     // robot_target_.pose.position.z = part_msg->pose_stamped.pose.position.z;
     robot_target_.pose.position.z = z_min_;
 
-//     if(part_type_.compare("TypeB") == 0)
-//     {
-//       robot_target_.pose.position.z += 0.02;
-//     }
+    if(part_type_.compare("TypeB") == 0)
+    {
+      robot_target_.pose.position.z += 0.05;
+    }
+
+    robot_target_.header.stamp = ros::Time::now();
 
     robot_target_pub_.publish(robot_target_);
   }
@@ -111,12 +116,12 @@ class TargetPublisher {
 
     dist = sqrt((x_tool-x_target)*(x_tool-x_target) + (y_tool-y_target)*(y_tool-y_target) + (z_tool-z_target)*(z_tool-z_target));
 
-    if(dist < 0.10 && !controller_updated_)
+    if(dist < 0.05 && !controller_updated_)
     {
       dynamic_reconfigure::Reconfigure reconf_srv;
       dynamic_reconfigure::DoubleParameter double_param;
       double_param.name = "mass";
-      double_param.value = 5.0;
+      double_param.value = controller_mass_;
       reconf_srv.request.config.doubles.push_back(double_param);
       dynamic_reconfigure_client_.call(reconf_srv);
 
