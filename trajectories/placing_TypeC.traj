@@ -1,8 +1,7 @@
 --- name: placing_TypeC
 --- type: joint_based
---- date: 2019-Sep-25 13:15:43.760853
+--- date: 2019-Sep-28 14:31:53.181980
 --- reference_frame: 
  ur10_shoulder_pan_joint ur10_shoulder_lift_joint ur10_elbow_joint ur10_wrist_1_joint ur10_wrist_2_joint ur10_wrist_3_joint
-2.337		-1.557		-2.112		-1.022		1.578		2.318		wp	0
 1.879		-1.926		-1.688		-1.087		1.582		1.861		wp	0
 1.879		-1.987		-1.747		-0.967		1.582		1.859		wp	0
