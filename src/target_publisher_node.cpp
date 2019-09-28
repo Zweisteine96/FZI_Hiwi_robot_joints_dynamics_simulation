@@ -15,6 +15,7 @@ class TargetPublisher {
   ros::Publisher robot_target_pub_;
   ros::Subscriber part_info_sub_;
   ros::Subscriber update_controller_sub_;
+  ros::Subscriber enable_target_sub_;
   ros::ServiceClient enable_grasping_client_;
   ros::ServiceClient dynamic_reconfigure_client_;
   ros::ServiceServer part_selection_service_;
@@ -24,6 +25,7 @@ class TargetPublisher {
   std::string end_effector_frame_;
   std::string part_type_;
   bool controller_updated_;
+  bool publish_target_;
 
   double x_min_;
   double x_max_;
@@ -53,16 +55,23 @@ class TargetPublisher {
       robot_target_pub_ = nh_.advertise<geometry_msgs::PoseStamped>("target_frame", 1);
       part_info_sub_ = nh_.subscribe("tp_box_pose", 1, &TargetPublisher::getPartInfo, this);
       update_controller_sub_ = nh_.subscribe("update_controller", 1, &TargetPublisher::updateController, this);
+      enable_target_sub_ = nh_.subscribe("enable_target_publisher", 1, &TargetPublisher::enableTarget, this);
       enable_grasping_client_ = nh_.serviceClient<ar_conveyor_launch::EnableGrasping>("enable_grasping");
       dynamic_reconfigure_client_ = nh_.serviceClient<dynamic_reconfigure::Reconfigure>("cartesian_motion_controller/solver/set_parameters");
 
       robot_target_.pose.orientation =  tf::createQuaternionMsgFromRollPitchYaw(3.14, 0, 1.57);
 
       controller_updated_ = false;
+      publish_target_ = true;
   }
 
   void getPartInfo(const box_info_msgs::BoxInformationStamped::ConstPtr& part_msg)
   {
+    if(!publish_target_)
+    {
+      return;
+    }
+
     if( (part_msg->pose_stamped.pose.position.x < x_min_) || (part_msg->pose_stamped.pose.position.x > x_max_) || 
         (part_msg->pose_stamped.pose.position.y < y_min_) || (part_msg->pose_stamped.pose.position.y > y_max_) )
     {
@@ -91,6 +100,10 @@ class TargetPublisher {
     controller_updated_ = msg.data;
   }
 
+  void enableTarget(std_msgs::Bool msg)
+  {
+    publish_target_ = msg.data;
+  }
 
   void checkDistance()
   {
@@ -127,7 +140,6 @@ class TargetPublisher {
 
       controller_updated_ = true;
     }
-
 
     if(dist < 0.02)
     {
