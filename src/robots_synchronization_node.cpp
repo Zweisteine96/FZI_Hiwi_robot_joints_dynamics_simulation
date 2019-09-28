@@ -23,7 +23,7 @@ class RobotsSynchronization {
   {
       // ros::param::param<std::string>("~base_frame", base_frame_, "base_link");
       
-      robot_synchronization_service_ = nh_.advertiseService("robot_synchronization",  &RobotsSynchronization::synchronizeRobots, this);
+      robot_synchronization_service_ = nh_.advertiseService("/robot_synchronization",  &RobotsSynchronization::synchronizeRobots, this);
 
       busy_ = false;
   }
