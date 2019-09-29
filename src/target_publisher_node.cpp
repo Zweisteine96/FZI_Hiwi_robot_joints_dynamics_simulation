@@ -107,6 +107,11 @@ class TargetPublisher {
 
   void checkDistance()
   {
+    if(!publish_target_)
+    {
+      return;
+    }
+
     tf::StampedTransform transform;
     try
     {
@@ -116,6 +121,7 @@ class TargetPublisher {
     {
       ROS_ERROR("%s",ex.what());
       ros::Duration(1.0).sleep();
+      ROS_ERROR("Node: target publisher");
     }
 
     double x_tool, y_tool, z_tool, x_target, y_target, z_target, dist;
