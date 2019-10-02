@@ -1,7 +1,7 @@
 --- name: virtual_ur10_placing_TypeA
 --- type: joint_based
---- date: 2019-Sep-29 22:38:05.462841
+--- date: 2019-Oct-02 21:44:56.129671
 --- reference_frame: 
  ur10_shoulder_pan_joint ur10_shoulder_lift_joint ur10_elbow_joint ur10_wrist_1_joint ur10_wrist_2_joint ur10_wrist_3_joint
--1.575		-1.797		-1.774		-1.116		1.568		-3.073		wp	0
--1.573		-1.884		-1.86		-0.944		1.568		-3.073		wp	0
+-1.465		-0.789		-2.335		-1.56		1.58		-2.962		wp	0
+-1.457		-0.813		-2.505		-1.366		1.579		-2.955		wp	0
