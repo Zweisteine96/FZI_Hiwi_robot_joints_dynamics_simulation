@@ -65,12 +65,12 @@ windows:
       - commands:
         - rosrun ar_conveyor_launch robots_synchronization_node
     delay: 10
-  - name: rviz
-    splits:
-      - commands:
-          - roslaunch ar_conveyor_launch visualization.launch
-      - commands:
-          - rqt
+  #- name: rviz
+    #splits:
+      #- commands:
+          #- roslaunch ar_conveyor_launch visualization.launch
+      #- commands:
+          #- rqt
 
   - name: state_machine
     layout: tiled
