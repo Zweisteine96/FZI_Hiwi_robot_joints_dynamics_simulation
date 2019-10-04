@@ -1,6 +1,6 @@
 --- name: home
 --- type: joint_based
---- date: 2019-Sep-28 14:32:56.189708
+--- date: 2019-Oct-04 12:50:21.069810
 --- reference_frame: 
  ur10_shoulder_pan_joint ur10_shoulder_lift_joint ur10_elbow_joint ur10_wrist_1_joint ur10_wrist_2_joint ur10_wrist_3_joint
-2.892		-1.362		-2.282		-1.039		1.565		2.873		wp	0
+3.114		-1.27		-2.347		-1.1		1.549		3.096		wp	0
