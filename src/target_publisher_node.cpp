@@ -77,6 +77,32 @@ class TargetPublisher {
     {
       return;
     }
+    
+    /*
+    // update controller parameter if new target is far away from the previous goal
+    double x, y, x_new, y_new, dist;
+    
+    x = robot_target_.pose.position.x;
+    y = robot_target_.pose.position.y;
+    x_new = part_msg->pose_stamped.pose.position.x;
+    y_new = part_msg->pose_stamped.pose.position.y;
+    
+    dist = sqrt((x-x_new)*(x-x_new) + (y-y_new)*(y-y_new));
+    
+    std::cout << "distance: " << dist << std::endl;
+    if(dist > 0.05 && controller_updated_)
+    {
+      std::cout << "updating mass for big distance " << std::endl;
+      dynamic_reconfigure::Reconfigure reconf_srv;
+      dynamic_reconfigure::DoubleParameter double_param;
+      double_param.name = "mass";
+      double_param.value = 12.0;
+      reconf_srv.request.config.doubles.push_back(double_param);
+      dynamic_reconfigure_client_.call(reconf_srv);
+
+      controller_updated_ = false;
+    }
+    */
 
     part_type_ = part_msg->box_type;
 
@@ -91,6 +117,7 @@ class TargetPublisher {
     }
 
     robot_target_.header.stamp = ros::Time::now();
+    robot_target_.header.frame_id = base_frame_;
 
     robot_target_pub_.publish(robot_target_);
   }
@@ -162,7 +189,7 @@ int main(int argc, char** argv) {
 
   TargetPublisher ps;
 
-  ros::Rate r(10);
+  ros::Rate r(5);
 
   while (ros::ok())
   {
