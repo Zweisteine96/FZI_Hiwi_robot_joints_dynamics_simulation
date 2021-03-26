@@ -1,0 +1,7 @@
+--- name: go_to_machine
+--- type: joint_based
+--- date: 2021-Mar-26 13:59:00.008749
+--- reference_frame: 
+ ur10_shoulder_pan_joint ur10_shoulder_lift_joint ur10_elbow_joint ur10_wrist_1_joint ur10_wrist_2_joint ur10_wrist_3_joint
+2.129		-1.256		-2.232		-1.206		1.583		2.2		wp	0
+1		-1.306		-2.309		-1.077		1.583		2.6		wp	0

@@ -4,9 +4,9 @@ common:
   #   - sourcing an environment
   #   - ssh-ing to another machine
   before_commands:
-    - fzirob change_environment motek_sim2log
-    - export ROS_MASTER_URI=http://192.168.1.3:11311
-    - export ROS_IP=192.168.1.3
+    - fzirob change_environment sim2log_review
+    # - export ROS_MASTER_URI=http://192.168.1.3:11311
+    # - export ROS_IP=192.168.1.3
 
   # The default window will be the one displayed when first connecting to the tmux session
   default_window: README
@@ -22,7 +22,7 @@ windows:
     splits:
       - commands:
         - roscore
-    delay: 1
+    delay: 3
   - name: kinematics
     splits:
       - commands:
@@ -31,13 +31,13 @@ windows:
   - name: hardware
     splits:
       - commands:
-        - ssh 192.168.1.10
-        - ce motek_sim2log
-        - export ROS_MASTER_URI=http://192.168.1.3:11311
-        - export ROS_IP=192.168.1.10
+        # - ssh 192.168.1.10
+        # - ce motek_sim2log
+        # - export ROS_MASTER_URI=http://192.168.1.3:11311
+        # - export ROS_IP=192.168.1.10
         - roslaunch ar_conveyor_launch robot.launch sim:=${sim}
-      - commands:
-        - roslaunch ar_conveyor_launch gripper.launch sim:=${sim}
+      # - commands:
+      #   - roslaunch ar_conveyor_launch gripper.launch sim:=${sim}
       - commands:
         - sleep 3
         - roslaunch ar_conveyor_launch controller_spawner.launch
@@ -62,13 +62,13 @@ windows:
     splits:
       - commands:
         - roslaunch ar_conveyor_launch high_level.launch
-      - commands:
-        - rosrun ar_conveyor_launch robots_synchronization_node
+      # - commands:
+      #   - rosrun ar_conveyor_launch robots_synchronization_node
     delay: 10
-  #- name: rviz
-    #splits:
-      #- commands:
-          #- roslaunch ar_conveyor_launch visualization.launch
+  - name: rviz
+    splits:
+      - commands:
+          - roslaunch ar_conveyor_launch visualization.launch
       #- commands:
           #- rqt
 
@@ -83,6 +83,9 @@ windows:
       - commands:
         - sleep 3
         - roslaunch flexbe_app flexbe_ocs.launch
+      - commands:
+        - sleep 10
+        - rosrun flexbe_widget be_launcher -b 'Review Meeting'
 
 
   # Helpful stuff
