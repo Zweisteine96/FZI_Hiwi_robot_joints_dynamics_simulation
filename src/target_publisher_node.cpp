@@ -106,8 +106,8 @@ class TargetPublisher {
 
     part_type_ = part_msg->box_type;
 
-    robot_target_.pose.position.x = part_msg->pose_stamped.pose.position.x;
-    robot_target_.pose.position.y = part_msg->pose_stamped.pose.position.y;
+    robot_target_.pose.position.x = -part_msg->pose_stamped.pose.position.x;
+    robot_target_.pose.position.y = -part_msg->pose_stamped.pose.position.y;
     // robot_target_.pose.position.z = part_msg->pose_stamped.pose.position.z;
     robot_target_.pose.position.z = z_min_;
 
