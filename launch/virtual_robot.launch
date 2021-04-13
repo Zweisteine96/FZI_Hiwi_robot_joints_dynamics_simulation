@@ -78,7 +78,7 @@
           <arg name="x_max" value="1.5"/>
           <arg name="y_min" value="-1.5"/>
           <arg name="y_max" value="1.5"/>
-          <arg name="z_min" value="0.25"/>
+          <arg name="z_min" value="0.27"/>
           <arg name="z_max" value="1.5"/>
           <arg name="controller_mass" default="3.0"/>
           <arg name="base_frame" value="virtual_ur10_base_link"/>
