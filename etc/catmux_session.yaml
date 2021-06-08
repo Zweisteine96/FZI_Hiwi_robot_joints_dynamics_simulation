@@ -4,7 +4,7 @@ common:
   #   - sourcing an environment
   #   - ssh-ing to another machine
   before_commands:
-    - fzirob change_environment sim2log_review
+    - fzirob change_environment
     # - export ROS_MASTER_URI=http://192.168.1.3:11311
     # - export ROS_IP=192.168.1.3
 
@@ -29,15 +29,26 @@ windows:
         - roslaunch ar_conveyor_launch kinematics.launch
     delay: 1
   - name: hardware
+    if: sim
     splits:
       - commands:
-        # - ssh 192.168.1.10
-        # - ce motek_sim2log
-        # - export ROS_MASTER_URI=http://192.168.1.3:11311
-        # - export ROS_IP=192.168.1.10
         - roslaunch ar_conveyor_launch robot.launch sim:=${sim}
+      - commands:
+        - sleep 3
+        - roslaunch ar_conveyor_launch controller_spawner.launch
       # - commands:
       #   - roslaunch ar_conveyor_launch gripper.launch sim:=${sim}
+  - name: hardware
+    unless: sim
+    splits:
+      - commands:
+        - ssh 192.168.1.10
+        - ce motek_sim2log
+        - export ROS_MASTER_URI=http://192.168.1.3:11311
+        - export ROS_IP=192.168.1.10
+        - roslaunch ar_conveyor_launch robot.launch sim:=${sim}
+      - commands:
+        - roslaunch ar_conveyor_launch gripper.launch sim:=${sim}
       - commands:
         - sleep 3
         - roslaunch ar_conveyor_launch controller_spawner.launch
@@ -65,12 +76,12 @@ windows:
       # - commands:
       #   - rosrun ar_conveyor_launch robots_synchronization_node
     delay: 10
-  #- name: rviz
-  #  splits:
-  #    - commands:
-  #        - roslaunch ar_conveyor_launch visualization.launch
-  #    #- commands:
-  #        #- rqt
+  - name: rviz
+    splits:
+     - commands:
+         - roslaunch ar_conveyor_launch visualization.launch
+     - commands:
+         - rosrun rqt_combined_trajectory_designer rqt_combined_trajectory_designer
 
   - name: state_machine
     layout: tiled
@@ -80,12 +91,12 @@ windows:
       - commands:
         - sleep 3
         - rosrun flexbe_widget be_action_server
-      #- commands:
-      #  - sleep 3
-      #  - roslaunch flexbe_app flexbe_ocs.launch
+      - commands:
+        - sleep 3
+        - roslaunch flexbe_app flexbe_ocs.launch
       - commands:
         - sleep 10
-        - rosrun flexbe_widget be_launcher -b 'Review Meeting'
+        - rosrun flexbe_widget be_launcher -b 'ReviewMeeting'
 
 
   # Helpful stuff
