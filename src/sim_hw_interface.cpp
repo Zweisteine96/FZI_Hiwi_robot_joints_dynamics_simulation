@@ -67,6 +67,7 @@ void SimHWInterface::init()
 
   // Resize vectors
   joint_position_prev_.resize(num_joints_, 0.0);
+  joint_acc_.resize(num_joints_, 0.0);
 
   ROS_INFO_NAMED(name_, "SimHWInterface Ready.");
 }
@@ -92,7 +93,8 @@ void SimHWInterface::write(ros::Duration &elapsed_time)
     switch (sim_control_mode_)
     {
       case 0:  // hardware_interface::MODE_POSITION:
-        positionControlSimulation(elapsed_time, joint_id);
+        // positionControlSimulation(elapsed_time, joint_id);
+        newPositionControlSimulation(elapsed_time, joint_id);
         break;
 
       case 1:  // hardware_interface::MODE_VELOCITY:
@@ -113,6 +115,7 @@ void SimHWInterface::write(ros::Duration &elapsed_time)
 
       case 2:  // hardware_interface::MODE_EFFORT:
         ROS_ERROR_STREAM_NAMED(name_, "Effort not implemented yet");
+        //effortControlSimulation(elapsed_time, joint_id);
         break;
     }
   }
@@ -127,12 +130,13 @@ void SimHWInterface::enforceLimits(ros::Duration &period)
 void SimHWInterface::positionControlSimulation(ros::Duration &elapsed_time, const std::size_t joint_id)
 {
   const double max_delta_pos = joint_velocity_limits_[joint_id] * elapsed_time.toSec();
-
+  
   // Move all the states to the commanded set points at max velocity
   p_error_ = joint_position_command_[joint_id] - joint_position_[joint_id];
 
   const double delta_pos = std::max(std::min(p_error_, max_delta_pos), -max_delta_pos);
-  joint_position_[joint_id] += delta_pos;
+  //joint_position_[joint_id] += delta_pos;
+  joint_position_[joint_id] = delta_pos;
 
   // Bypass max velocity p controller:
   //joint_position_[joint_id] = joint_position_command_[joint_id];
@@ -149,4 +153,22 @@ void SimHWInterface::positionControlSimulation(ros::Duration &elapsed_time, cons
   joint_position_prev_[joint_id] = joint_position_[joint_id];
 }
 
+// position control mode considering joint dynamics (by Cheng 10.Okt.2021)
+void SimHWInterface::newPositionControlSimulation(ros::Duration &elapsed_time, const std::size_t joint_id)
+{
+  // robot jonit physical parameters (random values, just for test)
+  double inertia_arm = 1.0;
+  double damping_connect = 1.0;
+  double spring_connect = 1.0;
+  double friction = 1.0;
+
+  // calculate actual joint acceleration
+  joint_acc_[joint_id] = ((damping_connect / elapsed_time.toSec() + spring_connect) * joint_position_command_[joint_id] - friction) / (inertia_arm + damping_connect * elapsed_time.toSec() + 0.5 * spring_connect * pow(elapsed_time.toSec(), 2));
+
+  joint_velocity_[joint_id] += joint_acc_[joint_id] * elapsed_time.toSec();
+  
+  joint_position_[joint_id] += joint_velocity_[joint_id] * elapsed_time.toSec() + 0.5 * joint_acc_[joint_id] * pow(elapsed_time.toSec(), 2);
+}
+
 }  // namespace
+
