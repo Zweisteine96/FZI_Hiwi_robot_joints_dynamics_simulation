@@ -93,7 +93,7 @@ void SimHWInterface::write(ros::Duration &elapsed_time)
     switch (sim_control_mode_)
     {
       case 0:  // hardware_interface::MODE_POSITION:
-        // positionControlSimulation(elapsed_time, joint_id);
+        //positionControlSimulation(elapsed_time, joint_id);
         newPositionControlSimulation(elapsed_time, joint_id);
         break;
 
@@ -110,7 +110,6 @@ void SimHWInterface::write(ros::Duration &elapsed_time)
         // Naive
         joint_velocity_[joint_id] = joint_velocity_command_[joint_id];
         joint_position_[joint_id] += joint_velocity_command_[joint_id] * elapsed_time.toSec();
-
         break;
 
       case 2:  // hardware_interface::MODE_EFFORT:
@@ -157,17 +156,22 @@ void SimHWInterface::positionControlSimulation(ros::Duration &elapsed_time, cons
 void SimHWInterface::newPositionControlSimulation(ros::Duration &elapsed_time, const std::size_t joint_id)
 {
   // robot jonit physical parameters (random values, just for test)
-  double inertia_arm = 1.0;
+  double inertia_arm = 5.0;
   double damping_connect = 1.0;
   double spring_connect = 1.0;
-  double friction = 1.0;
+  double friction = 0.0;
 
   // calculate actual joint acceleration
-  joint_acc_[joint_id] = ((damping_connect / elapsed_time.toSec() + spring_connect) * joint_position_command_[joint_id] - friction) / (inertia_arm + damping_connect * elapsed_time.toSec() + 0.5 * spring_connect * pow(elapsed_time.toSec(), 2));
+  joint_acc_[joint_id] = ((damping_connect / elapsed_time.toSec() + spring_connect) * (joint_position_command_[joint_id] * 57.32) - friction) / (inertia_arm + damping_connect * elapsed_time.toSec() + 0.5 * spring_connect * pow(elapsed_time.toSec(), 2));
 
-  joint_velocity_[joint_id] += joint_acc_[joint_id] * elapsed_time.toSec();
+  joint_position_[joint_id] += 0.0174 * (joint_velocity_[joint_id] * elapsed_time.toSec() + 0.5 * joint_acc_[joint_id] * pow(elapsed_time.toSec(), 2));
   
-  joint_position_[joint_id] += joint_velocity_[joint_id] * elapsed_time.toSec() + 0.5 * joint_acc_[joint_id] * pow(elapsed_time.toSec(), 2);
+  if (elapsed_time.toSec() > 0)
+  {
+    joint_velocity_[joint_id] += joint_acc_[joint_id] * elapsed_time.toSec();
+  }
+  else
+    joint_velocity_[joint_id] = 0;
 }
 
 }  // namespace
