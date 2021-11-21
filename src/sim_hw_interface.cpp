@@ -55,7 +55,7 @@ SimHWInterface::SimHWInterface(ros::NodeHandle &nh, urdf::Model *urdf_model)
   if (error)
   {
     ROS_WARN_STREAM_NAMED(name_, "SimHWInterface now requires the following config in the yaml:");
-    ROS_WARN_STREAM_NAMED(name_, "   sim_control_mode: 0 # 0: position, 1: velocity");
+    ROS_WARN_STREAM_NAMED(name_, "   sim_control_mode: 1 # 0: position, 1: velocity");
   }
   rosparam_shortcuts::shutdownIfError(name_, error);
 }
@@ -88,13 +88,14 @@ void SimHWInterface::write(ros::Duration &elapsed_time)
   // ros_control controllers take
   // care of PID loops for you. This P-controller is only intended to mimic the delay in real
   // hardware, somewhat like a simualator
+  int sim_control_mode_ = 2;
   for (std::size_t joint_id = 0; joint_id < num_joints_; ++joint_id)
   {
     switch (sim_control_mode_)
     {
       case 0:  // hardware_interface::MODE_POSITION:
-        //positionControlSimulation(elapsed_time, joint_id);
-        newPositionControlSimulation(elapsed_time, joint_id);
+        positionControlSimulation(elapsed_time, joint_id);
+        //newPositionControlSimulation(elapsed_time, joint_id);
         break;
 
       case 1:  // hardware_interface::MODE_VELOCITY:
@@ -113,8 +114,8 @@ void SimHWInterface::write(ros::Duration &elapsed_time)
         break;
 
       case 2:  // hardware_interface::MODE_EFFORT:
-        ROS_ERROR_STREAM_NAMED(name_, "Effort not implemented yet");
-        //effortControlSimulation(elapsed_time, joint_id);
+        //ROS_ERROR_STREAM_NAMED(name_, "Effort not implemented yet");
+        effortControlSimulation(elapsed_time, joint_id);
         break;
     }
   }
@@ -134,8 +135,8 @@ void SimHWInterface::positionControlSimulation(ros::Duration &elapsed_time, cons
   p_error_ = joint_position_command_[joint_id] - joint_position_[joint_id];
 
   const double delta_pos = std::max(std::min(p_error_, max_delta_pos), -max_delta_pos);
-  //joint_position_[joint_id] += delta_pos;
-  joint_position_[joint_id] = delta_pos;
+  joint_position_[joint_id] += delta_pos;
+  //joint_position_[joint_id] = delta_pos;
 
   // Bypass max velocity p controller:
   //joint_position_[joint_id] = joint_position_command_[joint_id];
@@ -156,13 +157,13 @@ void SimHWInterface::positionControlSimulation(ros::Duration &elapsed_time, cons
 void SimHWInterface::newPositionControlSimulation(ros::Duration &elapsed_time, const std::size_t joint_id)
 {
   // robot jonit physical parameters (random values, just for test)
-  double inertia_arm = 5.0;
-  double damping_connect = 1.0;
+  double inertia_arm = 2.0;
+  double damping_connect = 0.0;
   double spring_connect = 1.0;
   double friction = 0.0;
 
   // calculate actual joint acceleration
-  joint_acc_[joint_id] = ((damping_connect / elapsed_time.toSec() + spring_connect) * (joint_position_command_[joint_id] * 57.32) - friction) / (inertia_arm + damping_connect * elapsed_time.toSec() + 0.5 * spring_connect * pow(elapsed_time.toSec(), 2));
+  joint_acc_[joint_id] += ((damping_connect / elapsed_time.toSec() + spring_connect) * (joint_position_command_[joint_id] * 57.32) - friction) / (inertia_arm + damping_connect * elapsed_time.toSec() + 0.5 * spring_connect * pow(elapsed_time.toSec(), 2));
 
   joint_position_[joint_id] += 0.0174 * (joint_velocity_[joint_id] * elapsed_time.toSec() + 0.5 * joint_acc_[joint_id] * pow(elapsed_time.toSec(), 2));
   
@@ -171,7 +172,29 @@ void SimHWInterface::newPositionControlSimulation(ros::Duration &elapsed_time, c
     joint_velocity_[joint_id] += joint_acc_[joint_id] * elapsed_time.toSec();
   }
   else
-    joint_velocity_[joint_id] = 0;
+    joint_velocity_[joint_id] = joint_velocity_[joint_id];
+}
+
+//effort command mode by Cheng
+void SimHWInterface::effortControlSimulation(ros::Duration &elapsed_time, const std::size_t joint_id)
+{
+  double iA = 10.0; // joint inertia at arm side
+  double iM = 10.0; // joint inertia at motor side
+  double dA = 2.0; // damping coefficient at arm side
+  double dM = 2.0; // damping coefficient at motor side
+  double sA = 2.0; // spring coefficient at arm side
+  double sM = 2.0; // spring coefficient at motor side
+  double fT = 5.0; // friction torque
+  int gR = 20.0; //gear reduction ratio
+
+  //calculate joint angle acceleration
+  joint_acc_[joint_id] = (gR*joint_effort_command_[joint_id]-(gR+1)*fT)/((iA+iM)+(dA+dM)*elapsed_time.toSec()+0.5*(sA+sM)*pow(elapsed_time.toSec(), 2));
+
+  //calculate joint angle position
+  joint_position_[joint_id] += joint_velocity_[joint_id]*elapsed_time.toSec()+0.5*joint_acc_[joint_id]*pow(elapsed_time.toSec(), 2);
+
+  //calculate joint angle velocity
+  joint_velocity_[joint_id] += joint_acc_[joint_id]*elapsed_time.toSec();
 }
 
 }  // namespace

@@ -75,7 +75,7 @@ protected:
   /** \brief Basic model of system for position control by Cheng */
   virtual void newPositionControlSimulation(ros::Duration &elapsed_time, const std::size_t joint_id);
   /** \brief Basic model of system for effort control by Cheng */
-  //virtual void effortControlSimulation(ros::Duration &elapsed_time, const std::size_t joint_id);
+  virtual void effortControlSimulation(ros::Duration &elapsed_time, const std::size_t joint_id);
 
   // Name of this class
   std::string name_;
@@ -89,7 +89,7 @@ protected:
   std::vector<double> joint_acc_;
 
   // Send commands in different modes
-  int sim_control_mode_ = 0;
+  int sim_control_mode_ = 2;
 
 };  // class
 
