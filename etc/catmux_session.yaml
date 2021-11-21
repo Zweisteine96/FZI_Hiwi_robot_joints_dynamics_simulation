@@ -83,20 +83,20 @@ windows:
      - commands:
          - rosrun rqt_combined_trajectory_designer rqt_combined_trajectory_designer
 
-  - name: state_machine
-    layout: tiled
-    splits:
-      - commands:
-        - roslaunch flexbe_onboard behavior_onboard.launch
-      - commands:
-        - sleep 3
-        - rosrun flexbe_widget be_action_server
-      - commands:
-        - sleep 3
-        - roslaunch flexbe_app flexbe_ocs.launch
-      - commands:
-        - sleep 10
-        - rosrun flexbe_widget be_launcher -b 'ReviewMeeting'
+  #- name: state_machine
+   # layout: tiled
+    #splits:
+     # - commands:
+      #  - roslaunch flexbe_onboard behavior_onboard.launch
+      #- commands:
+       # - sleep 3
+        #- rosrun flexbe_widget be_action_server
+      #- commands:
+       # - sleep 3
+        #- roslaunch flexbe_app flexbe_ocs.launch
+      #- commands:
+       # - sleep 10
+       # - rosrun flexbe_widget be_launcher -b 'ReviewMeeting'
 
 
   # Helpful stuff

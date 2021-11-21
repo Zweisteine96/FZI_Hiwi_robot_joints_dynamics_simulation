@@ -142,6 +142,8 @@ class TargetPublisher {
     tf::StampedTransform transform;
     try
     {
+      //Here adding the function listener_.waitForTransform() by Cheng
+      listener_.waitForTransform(base_frame_, end_effector_frame_, ros::Time(0), ros::Duration(10.0) );
       listener_.lookupTransform(base_frame_, end_effector_frame_, ros::Time(0), transform);
     }
     catch (tf::TransformException ex)

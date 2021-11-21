@@ -18,7 +18,7 @@
 
 
         <!-- Load robot description from xacro file -->
-        <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find ar_conveyor_description)/urdf/virtual_ur10.urdf.xacro'" />
+        <param name="robot_description" textfile="$(find ar_conveyor_description)/urdf/virtual_ur10.urdf" />
         <param name="robot_description_semantic" textfile="$(find ar_conveyor_description)/srdf/virtual_pathloader.srdf"/>
 
         <!-- Publish joint state as tf transforms -->

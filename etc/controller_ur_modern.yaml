@@ -20,7 +20,9 @@ cartesian_motion_controller:
         rot_z: {p: 10.0}
 
 joint_trajectory_controller:
-    type: "position_controllers/JointTrajectoryController"
+    #type: "position_controllers/JointTrajectoryController"
+    #type: "velocity_controllers/JointTrajectoryController"
+    type: "effort_controllers/JointTrajectoryController"
     joints:
     - ur10_shoulder_pan_joint
     - ur10_shoulder_lift_joint
@@ -37,6 +39,16 @@ joint_trajectory_controller:
       ur10_wrist_1_joint: {trajectory: 0.1, goal: 0.1}
       ur10_wrist_2_joint: {trajectory: 0.1, goal: 0.1}
       ur10_wrist_3_joint: {trajectory: 0.1, goal: 0.1}
+    gains:
+      ur10_shoulder_pan_joint: {p: 100, d: 10, i: 1, i_clamp: 1}
+      ur10_shoulder_lift_joint: {p: 100, d: 10, i: 1, i_clamp: 1}
+      ur10_elbow_joint: {p: 100, d: 10, i: 1, i_clamp: 1}
+      ur10_wrist_1_joint: {p: 100, d: 10, i: 1, i_clamp: 1}
+      ur10_wrist_2_joint: {p: 100, d: 10, i: 1, i_clamp: 1}
+      ur10_wrist_3_joint: {p: 100, d: 10, i: 1, i_clamp: 1}
+    state_publish_rate: 50
+    action_monitor_rate: 50
+    stop_trajectory_duration: 0.6
 
 joint_state_controller:
     type: joint_state_controller/JointStateController
