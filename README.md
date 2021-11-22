@@ -16,7 +16,7 @@ tf::StampedTransform transform;
     
 ```
 ### controller_ur_modern
-In the file controller_ur_modern.yaml, the joint_trajectory_controller is modified such that the effort controller can be applied. The PID parameters need to be further tuned for real tests.
+In the file controller_ur_modern.yaml, the joint_trajectory_controller is modified such that the effort controller can be applied. The PID parameters need to be further tuned for real tests. The files can be checked within the branch "kinetic-devel".
 
 ```
 joint_trajectory_controller:
